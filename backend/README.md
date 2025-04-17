@@ -252,3 +252,128 @@ curl -X GET http://localhost:4000/users/logout \
 - The API uses environment variables for sensitive data (e.g., JWT secret).
 
 ---
+
+# Captain Registration API
+
+## Endpoint
+
+`POST /captains/register`
+
+## Description
+
+Registers a new captain (driver) with vehicle details. Returns a JWT token and the created captain object on success.
+
+## Request Body
+
+Send a JSON object:
+
+```json
+{
+  "fullname": {
+    "firstname": "Jane",
+    "lastname": "Smith"
+  },
+  "email": "jane.smith@example.com",
+  "password": "yourpassword",
+  "vehicle": {
+    "color": "Red",
+    "plate": "ABC123",
+    "capacity": 4,
+    "vehicleType": "car"
+  }
+}
+```
+
+### Field Requirements
+
+- `fullname.firstname` (string, required): At least 3 characters.
+- `fullname.lastname` (string, required): At least 3 characters.
+- `email` (string, required): Must be a valid email.
+- `password` (string, required): At least 6 characters.
+- `vehicle.color` (string, required): At least 3 characters.
+- `vehicle.plate` (string, required): At least 3 characters.
+- `vehicle.capacity` (number, required): Must be a number.
+- `vehicle.vehicleType` (string, required): Must be one of `car`, `motorcycle`, or `auto`.
+
+## Responses
+
+### Success
+
+- **Status:** 201 Created
+- **Body:**
+  ```json
+  {
+    "token": "jwt_token_here",
+    "captain": {
+      "_id": "captain_id",
+      "fullname": {
+        "firstname": "Jane",
+        "lastname": "Smith"
+      },
+      "email": "jane.smith@example.com",
+      "vehicle": {
+        "color": "Red",
+        "plate": "ABC123",
+        "capacity": 4,
+        "vehicleType": "car"
+      }
+    }
+  }
+  ```
+
+### Validation Error
+
+- **Status:** 422 Unprocessable Entity
+- **Body:**
+  ```json
+  {
+    "errors": [
+      {
+        "msg": "Error message",
+        "param": "field",
+        "location": "body"
+      }
+    ]
+  }
+  ```
+
+### Duplicate Email Error
+
+- **Status:** 400 Bad Request
+- **Body:**
+  ```json
+  {
+    "message": "Captain already exists"
+  }
+  ```
+
+## Example Request
+
+```sh
+curl -X POST http://localhost:4000/captains/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "fullname": {"firstname": "Jane", "lastname": "Smith"},
+    "email": "jane.smith@example.com",
+    "password": "yourpassword",
+    "vehicle": {
+      "color": "Red",
+      "plate": "ABC123",
+      "capacity": 4,
+      "vehicleType": "car"
+    }
+  }'
+```
+
+---
+
+## Additional Information
+
+- All endpoints expect and return JSON.
+- JWT token should be stored securely on the client for authenticated requests.
+- Passwords are securely hashed before storage.
+- Validation errors will be returned as an array under the `errors` key.
+- Make sure to set the `Content-Type: application/json` header for all requests.
+- The API uses environment variables for sensitive data (e.g., JWT secret).
+
+---

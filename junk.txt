@@ -1,0 +1,20 @@
+{
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODAxMzhiODcxNTYxODUyNDgxN2Y1MDkiLCJpYXQiOjE3NDQ5MTA1MjAsImV4cCI6MTc0NDk5NjkyMH0.g1mSDflVGmLGMuugeheBdF3B3f1rQmMEaPZ0AkZdNpI",
+    "captain": {
+        "fullname": {
+            "firstname": "test_captain_firstname",
+            "lastname": "test_captain_lastname"
+        },
+        "email": "test_captain_email@test.com",
+        "password": "$2b$10$FYr76eS0NAoZIBgRxhRUmu2uN6nOQIB/mR2Y2hqmNCjUMnjI5M4xy",
+        "status": "inactive",
+        "vehicle": {
+            "color": "red",
+            "plate": "TG 04 AB 45",
+            "capacity": 3,
+            "vehicleType": "car"
+        },
+        "_id": "680138b8715618524817f509",
+        "__v": 0
+    }
+}
