@@ -377,3 +377,294 @@ curl -X POST http://localhost:4000/captains/register \
 - The API uses environment variables for sensitive data (e.g., JWT secret).
 
 ---
+
+
+
+
+
+# Captain Registration & Authentication API
+
+## Base URL
+
+`http://localhost:4000/captains`
+
+---
+
+## Endpoints
+
+### 1. Register Captain
+
+**POST** `/register`
+
+#### Description
+
+Registers a new captain (driver) with vehicle details. Returns a JWT token and the created captain object on success.
+
+#### Request Body
+
+```json
+{
+  "fullname": {
+    "firstname": "Jane",
+    "lastname": "Smith"
+  },
+  "email": "jane.smith@example.com",
+  "password": "yourpassword",
+  "vehicle": {
+    "color": "Red",
+    "plate": "ABC123",
+    "capacity": 4,
+    "vehicleType": "car"
+  }
+}
+```
+
+#### Field Requirements
+
+- `fullname.firstname` (string, required): At least 3 characters.
+- `fullname.lastname` (string, required): At least 3 characters.
+- `email` (string, required): Must be a valid email.
+- `password` (string, required): At least 6 characters.
+- `vehicle.color` (string, required): At least 3 characters.
+- `vehicle.plate` (string, required): At least 3 characters.
+- `vehicle.capacity` (number, required): Must be a number.
+- `vehicle.vehicleType` (string, required): Must be one of `car`, `motorcycle`, or `auto`.
+
+#### Responses
+
+- **201 Created**
+  ```json
+  {
+    "token": "jwt_token_here",
+    "captain": {
+      "_id": "captain_id",
+      "fullname": {
+        "firstname": "Jane",
+        "lastname": "Smith"
+      },
+      "email": "jane.smith@example.com",
+      "vehicle": {
+        "color": "Red",
+        "plate": "ABC123",
+        "capacity": 4,
+        "vehicleType": "car"
+      }
+    }
+  }
+  ```
+- **422 Unprocessable Entity**
+  ```json
+  {
+    "errors": [
+      {
+        "msg": "Error message",
+        "param": "field",
+        "location": "body"
+      }
+    ]
+  }
+  ```
+- **400 Bad Request**
+  ```json
+  {
+    "message": "Captain already exists"
+  }
+  ```
+
+#### Example Request
+
+```sh
+curl -X POST http://localhost:4000/captains/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "fullname": {"firstname": "Jane", "lastname": "Smith"},
+    "email": "jane.smith@example.com",
+    "password": "yourpassword",
+    "vehicle": {
+      "color": "Red",
+      "plate": "ABC123",
+      "capacity": 4,
+      "vehicleType": "car"
+    }
+  }'
+```
+
+---
+
+### 2. Login Captain
+
+**POST** `/login`
+
+#### Description
+
+Authenticates a captain with email and password. Returns a JWT token and the captain object on success.
+
+#### Request Body
+
+```json
+{
+  "email": "jane.smith@example.com",
+  "password": "yourpassword"
+}
+```
+
+#### Field Requirements
+
+- `email` (string, required): Must be a valid email.
+- `password` (string, required): At least 6 characters.
+
+#### Responses
+
+- **200 OK**
+  ```json
+  {
+    "token": "jwt_token_here",
+    "captain": {
+      "_id": "captain_id",
+      "fullname": {
+        "firstname": "Jane",
+        "lastname": "Smith"
+      },
+      "email": "jane.smith@example.com",
+      "vehicle": {
+        "color": "Red",
+        "plate": "ABC123",
+        "capacity": 4,
+        "vehicleType": "car"
+      }
+    }
+  }
+  ```
+- **422 Unprocessable Entity**
+  ```json
+  {
+    "errors": [
+      {
+        "msg": "Error message",
+        "param": "field",
+        "location": "body"
+      }
+    ]
+  }
+  ```
+- **400 Bad Request**
+  ```json
+  {
+    "message": "Invalid email or password"
+  }
+  ```
+
+#### Example Request
+
+```sh
+curl -X POST http://localhost:4000/captains/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "jane.smith@example.com",
+    "password": "yourpassword"
+  }'
+```
+
+---
+
+### 3. Get Captain Profile
+
+**GET** `/profile`
+
+#### Description
+
+Returns the authenticated captain's profile information. Requires a valid JWT token in the request (as a cookie or Authorization header).
+
+#### Headers
+
+- `Authorization: Bearer <jwt_token>` (if not using cookies)
+
+#### Responses
+
+- **200 OK**
+  ```json
+  {
+    "captain": {
+      "_id": "captain_id",
+      "fullname": {
+        "firstname": "Jane",
+        "lastname": "Smith"
+      },
+      "email": "jane.smith@example.com",
+      "vehicle": {
+        "color": "Red",
+        "plate": "ABC123",
+        "capacity": 4,
+        "vehicleType": "car"
+      },
+      "status": "active",
+      "socketId": null,
+      "location": {
+        "lat": null,
+        "lng": null
+      }
+    }
+  }
+  ```
+- **401 Unauthorized**
+  ```json
+  {
+    "message": "Authentication failed"
+  }
+  ```
+
+#### Example Request
+
+```sh
+curl -X GET http://localhost:4000/captains/profile \
+  -H "Authorization: Bearer <jwt_token>"
+```
+
+---
+
+### 4. Logout Captain
+
+**GET** `/logout`
+
+#### Description
+
+Logs out the authenticated captain by blacklisting the JWT token and clearing the authentication cookie. Requires a valid JWT token.
+
+#### Headers
+
+- `Authorization: Bearer <jwt_token>` (if not using cookies)
+
+#### Responses
+
+- **200 OK**
+  ```json
+  {
+    "message": "Logged out successfully"
+  }
+  ```
+- **401 Unauthorized**
+  ```json
+  {
+    "message": "Authentication failed"
+  }
+  ```
+
+#### Example Request
+
+```sh
+curl -X GET http://localhost:4000/captains/logout \
+  -H "Authorization: Bearer <jwt_token>"
+```
+
+---
+
+## Additional Information
+
+- All endpoints expect and return JSON.
+- JWT token should be stored securely on the client for authenticated requests.
+- Passwords are securely hashed before storage.
+- Validation errors will be returned as an array under the `errors` key.
+- Make sure to set the `Content-Type: application/json` header for all requests.
+- The API uses environment variables for sensitive data (e.g., JWT secret).
+
+---
