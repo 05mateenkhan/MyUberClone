@@ -11,7 +11,7 @@ const UserLogin = () => {
 
   const navigate = useNavigate();
 
-  const [user, setUser] = useContext(userDataContext);
+  const {user, setUser} = useContext(userDataContext);
   const submitHandler = async (e) => {
     e.preventDefault();
 

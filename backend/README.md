@@ -668,3 +668,67 @@ curl -X GET http://localhost:4000/captains/logout \
 - The API uses environment variables for sensitive data (e.g., JWT secret).
 
 ---
+# Ride Fare API
+
+## Get Fare
+
+**Endpoint:**  
+`GET /rides/get-fare`
+
+**Description:**  
+Calculates the fare for a ride based on the provided pickup and destination addresses. The fare is computed for different vehicle types (auto, car, motorcycle) using distance and duration details.
+
+**Query Parameters:**
+
+- `pickup` (string, required)  
+  The pick-up location. Must be at least 3 characters.
+- `destination` (string, required)  
+  The destination location. Must be at least 3 characters.
+
+**Responses:**
+
+### Success
+
+- **Status:** `200 OK`
+- **Body:**  
+  A JSON object containing fare estimates for each vehicle type. For example:
+  ```json
+  {
+    "auto": 75.50,
+    "car": 110.75,
+    "motorcycle": 50.20
+  }
+  ```
+
+### Validation Error / Missing Parameters
+
+- **Status:** `400 Bad Request`
+- **Body:**  
+  ```json
+  {
+    "error": [
+      {
+        "msg": "Invalid pickup address",
+        "param": "pickup",
+        "location": "query"
+      },
+      {
+        "msg": "Invalid destination address",
+        "param": "destination",
+        "location": "query"
+      }
+    ]
+  }
+  ```
+
+### Example Request
+
+```sh
+curl -X GET http://localhost:4000/rides/get-fare \
+  -H "Authorization: Bearer <jwt_token>" \
+  -G \
+  --data-urlencode "pickup=24B, Near Kapoor's cafe" \
+  --data-urlencode "destination=Famous hills, Hyderabad"
+```
+
+For further details, refer to the [ride.routes.js](backend/routes/ride.routes.js) and [ride.controller.js](backend/controllers/ride.controller.js).
